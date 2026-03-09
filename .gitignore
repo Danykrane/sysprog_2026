@@ -2,3 +2,5 @@
 .idea/
 
 CMakePresets*
+
+*cmake-build*/

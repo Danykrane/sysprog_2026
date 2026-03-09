@@ -14,7 +14,7 @@ add_compile_options(${COMMON_FLAGS})
 
 option(ENABLE_LEAK_CHECKS
     "Enable memory leak checks with heap_help"
-    OFF)
+    ON)
 
 option(ENABLE_GLOB_SEARCH
     "Enable compilation of all the files, not just the preselected ones"
