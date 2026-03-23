@@ -1,22 +1,11 @@
 #pragma once
 
-/**
- * Here you should specify which features do you want to implement via macros:
- * If you want to enable author name support, do:
- *
- *     #define NEED_AUTHOR 1
- *
- * To enable server-feed from admin do:
- *
- *     #define NEED_SERVER_FEED 1
- *
- * It is important to define these macros here, in the header, because it is
- * used by tests.
- */
-#define NEED_AUTHOR 0
-#define NEED_SERVER_FEED 0
+#define NEED_AUTHOR 1
+#define NEED_SERVER_FEED 1
 
+#include <cstdint>
 #include <string>
+#include <string_view>
 
 enum chat_errcode {
 	CHAT_ERR_INVALID_ARGUMENT = 1,
@@ -36,15 +25,33 @@ enum chat_events {
 
 struct chat_message {
 #if NEED_AUTHOR
-	/** Author's name. */
 	std::string author;
 #endif
-	/** 0-terminate text. */
 	std::string data;
-
-	/* PUT HERE OTHER MEMBERS */
 };
 
-/** Convert chat_events mask to events suitable for poll(). */
-int
-chat_events_to_poll_events(int mask);
+int setNonBlocking(int file_descriptor);
+
+bool isSpace(char character);
+
+std::string trimCopy(std::string_view string);
+
+void appendU32(std::string &buffer, uint32_t value);
+
+void readU32(const char *pointer_to_data, uint32_t &out);
+
+void enqueueFrame(std::string &out, std::string_view author, std::string_view data);
+
+struct frame_parser {
+	std::string buffer;
+	size_t offset = 0;
+
+	// попробовать вытащить один полный фрейм
+	bool try_pop(std::string &author, std::string &data);
+};
+
+// разобрать host:port
+int parseAddress(std::string_view address, std::string &host, std::string &port);
+
+// перевести маску событий чата в poll events
+int chat_events_to_poll_events(int mask);
